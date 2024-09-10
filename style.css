@@ -1,12 +1,12 @@
 h1 {
-  color: red;
+  color: crimson;
 }
 
 html {
   font-size: 18px;
   font-family: "Open Sans", sans-serif;
   background-color: #1e1919;
-  font-color: #e3dddd;
+  color: #e3dddd;
 }
 
 body {
