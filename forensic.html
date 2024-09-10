@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Ma page de test</title>
+  </head>
+  <body>
+
+<h1 id="menez-une-investigation-d-incident-num-rique-forensic">Menez une investigation d’incident numérique forensic</h1>
+<p>Le <strong><em>digital forensic</em></strong> couvre un domaine permettant de mener des investigations et des analyses sur des supports numériques ; il permet de comprendre une attaque informatique suite à l&#39;analyse d&#39;un évènement de sécurité.</p>
+<h2 id="enjeux-juridiques">Enjeux juridiques</h2>
+<ul>
+<li>Usage lors d&#39;enquêtes judiciaires en cas d&#39;implication de supports numériques dans une affaire criminelle (cybercriminalité...)</li>
+<li>Utiliser un bloqueur en écriture lors de la copie ou de l&#39;accès au support compromis</li>
+<li><a href="https://www.service-public.fr/particuliers/vosdroits/F2161">Expert judiciaire</a></li>
+</ul>
+<p>On peut distinguer trois finalités à la forensic :</p>
+<ul>
+<li>analyse forensic judiciaire</li>
+<li>analyse forensic en réponse à un incident</li>
+<li>analyse forensic scientifique</li>
+</ul>
+<p>L&#39;objectif final étant de préserver l&#39;image de la société tout en maintenant ses capacités opérationnelles.</p>
+<h2 id="m-thodologie">Méthodologie</h2>
+<p>Il s&#39;agit de réaliser une analyse factuelle sans jugement de valeur :</p>
+<ol>
+<li>Caractériser le contexte et collecter les informations</li>
+<li>Récupérer les supports numériques à analyser (relevé d&#39;empreinte/hash)</li>
+<li>Analyser les données collectées :<ul>
+<li>analyse du dump de mémoire</li>
+<li>analyse du disque dur</li>
+<li>analyse des fichiers suspects ou malveillants</li>
+</ul>
+</li>
+<li>Corrélation, déductions et reporting (indices de compromissions, recommandations)</li>
+</ol>
+<h2 id="choisir-ses-outils-et-pr-parer-son-laboratoire-d-analyse">Choisir ses outils et préparer son laboratoire d&#39;analyse</h2>
+<ul>
+<li>Suite logicielle payante <a href="https://www.opentext.com/products/encase-forensic">ENCASE</a></li>
+<li>Matériel <a href="https://forensics.wiki/write_blockers/">bloqueur en écriture</a></li>
+<li>Framework open source <a href="https://www.sleuthkit.org/">The Sleuth Kit</a> incluant la GUI Autopsy</li>
+<li>Analyse de mémoire vive avec <a href="https://volatilityfoundation.org/">Volatility</a></li>
+<li>Copie de disque dur et de RAM avec <a href="https://www.exterro.com/digital-forensics-software/ftk-imager">FTK Imager</a></li>
+</ul>
+<p>Pour préparer son environnement d&#39;analyse, l&#39;utilisation de machines virtuelles est recommandé en montant une VM Windows et une <a href="https://digital-forensics.sans.org/community/downloads">VM Linux</a> avec leurs outils respectifs.</p>
+<h3 id="mise-en-garde">Mise en garde</h3>
+<p>Certaines techniques permettent de <em>se soustraire aux analyses forensic</em> en dissimulant les données (stéganographie, falsification de métadonnées, modification d&#39;attributs de fichiers...) voire en les protégeant par chiffrement pour ralentir ou empêcher le travail d&#39;investigation numérique.</p>
+<p>Il convient donc autant que possible de <strong>réaliser des recoupements et de croiser les sources</strong> pour étayer, vérifier puis contrôler les renseignements collectés avant de tirer des conclusions.</p>
+<h2 id="collecte-des-donn-es">Collecte des données</h2>
+<p>Un objectif : ne pas altérer les données collectées puis stockées sur un support numérique.
+Outre les images brutes (dîtes RAW) certains formats &quot;métiers&quot; ont émergé :</p>
+<ul>
+<li>EnCase EWF (Expert Witness Format)</li>
+<li>FTK Smart</li>
+<li>AFF (Advanced Forensic Format) comme formart ouvert</li>
+</ul>
+<p>Après utilisation d&#39;un logiciel de <em>dump</em> il faudra calculer le l&#39;empreinte ou le <em>hash</em> de ce dernier. Ce calcul de condensat (ou hachage) s&#39;établira comme une preuve que le fichier n&#39;a pas été altéré par rapport à ce qu&#39;il était à l&#39;origine.</p>
+<p>Ce hash pourra être obtenu par différentes fonctions (MD5, SHA1, SHA512, etc.) et permettra de garantir l&#39;intégrité d&#39;un fichier et, potentiellement, de servir d&#39;<em>IOC</em> (<em>Indicator Of Compromission</em> ou Indicateur de Compromission).</p>
+<h2 id="analyse-de-la-m-moire-volatile">Analyse de la mémoire volatile</h2>
+<p>Un outil comme Volatility permet de déterminer le système d&#39;exploitation dont la mémoire vive a été <em>dumpée</em> ainsi que de lister les processus qui tournaient sur cette machine au moment de l&#39;incident. En outre, il permet de lister les connections réseaux ouvertes associées à des processus.</p>
+<p>Dans le cas d&#39;une machine Windows, il est par exemple possible de :</p>
+<ol>
+<li>récupérer le profil de l&#39;image
+ <code>volatility -f memdump.mem imageinfo</code></li>
+<li>récupérer la liste des processus
+ <code>volatility -f memdump.mem --profile=Win7SP2x64 pstree</code></li>
+<li>lister les librairies (DLL) attenantes à un processus (PID)
+ <code>volatility -f memdump.mem --profile=Win7SP2x64 dllist -p 1496</code></li>
+<li>obtenir des informations liées au registres
+ <code>volatility -f memdump.mem --profile=Win7SP2x64 hivelist</code></li>
+<li>collecter des <em>hashes</em> NTLM de mots de passe
+ <code>volatility -f memdump.mem --profile=Win7SP2x64 hashdump -y 0x8offset -s 0x8offset</code></li>
+<li>lister les connexions réseaux actives
+ <code>volatility -f memdump.mem --profile=Win7SP2x64 netscan</code></li>
+</ol>
+<p>Enfin, différents fichiers de mémoire peuvent être exploités :</p>
+<ul>
+<li>celui d&#39;enregistrement de mise en hibernation de la machine : hiberfil.sys</li>
+<li>le fichier de gestion des extensions de mémoire RAM (pagination) : pagefile.sys</li>
+</ul>
+<h3 id="indices-rechercher">Indices à rechercher</h3>
+<p>A ce niveau, les indices à rechercher peuvent se présenter sous plusieurs formes :</p>
+<ul>
+<li>des processus avec des noms aléatoires ont été identifiés</li>
+<li>l&#39;emplacement d&#39;un de ces processus n&#39;est pas courant et nécessite vérificatin- d</li>
+<li>des connexions réseau sont effectués par ces proce suspects</li>
+</ul>
+<p>D&#39;autres commandes Volatility permettent d&#39;aller davantage en profondeur. En voici quelques unes :</p>
+<ul>
+<li><code>psxview</code> pour afficher des processus cachés</li>
+<li><code>malfind</code> pour tenter de déceler du code malveillant</li>
+<li><code>mutantscan</code> pour lister les <em>mutual exclusion</em> (mutext)</li>
+<li><code>memdump</code> et  <code>procmemdump</code> pour dumper/extraire un processus précis</li>
+</ul>
+<h2 id="analyse-de-l-image-de-la-m-moire-non-volatile">Analyse de l&#39;image de la mémoire non-volatile</h2>
+<p>L&#39;objet de cette partie de l&#39;analyse est avant tout de connaitre l&#39;architecture du système de fichiers de la machine concernée.
+Par exemple, Windows utilise le système NTFS (<em>New Technology File System</em>) qui permet en autre :</p>
+<ul>
+<li>de gérer les droits des utilisateurs sur les fichiers</li>
+<li>de dissimuler des données avec l&#39;utilisation de l&#39;ADS (<em>Alternate Data Stream</em>)</li>
+<li>de structurer et d&#39;enregistrer les données avec la MFT (<em>Master File Table</em>) qui est une base de données relationnelle</li>
+</ul>
+<p>Dans un <em>dump</em> de disque dur (ou de SSD) réalisé avec FTK Imager, la MFT est extrayable depuis la racine de l&#39;arborescence. Chaque entrée MFT est composée d&#39;un en-tête et de plusieurs attributs.</p>
+<p>L&#39;export de la MFT est convertible en <em>.csv</em> grâce à l&#39;outil <a href="https://github.com/jschicht/Mft2Csv">Mft2Csv</a>.</p>
+<p>Après un travail de mise en forme, il devient alors possible de de bâtir une chronologie des évènements survenus sur la machine et d&#39;en retirer des informations complémentaires :</p>
+<ul>
+<li>tri par date de création</li>
+<li>localisation de fichiers sur la machine</li>
+<li>découverte de l&#39;origine d&#39;exécutables</li>
+<li>utilisation de dossiers temporaire (<code>/Temporary Internet Files</code> ou <code>/tmp</code>)</li>
+</ul>
+<h2 id="investigation-sous-windows">Investigation sous Windows</h2>
+<h3 id="analyse-des-logs">Analyse des logs</h3>
+<p>Le système d&#39;exploitation Windows enregistre énormément d&#39;informations - souvent sous forme de <em>log</em> - qui sont accessibles facilement et peuvent être énumérées. Par ici, un <a href="https://cyber-ssct.com/SANS%20Digital%20Forensic%20Poster.pdf">poster aide mémoire</a> du SANS.
+Sous Windows, chaque évènement est répertoriée dans les <em>event logs</em> comme les messages d&#39;erreur, d&#39;information et de warning. L&#39;outil Event Viewer permet de visualiser ces <em>logs</em>.</p>
+<p>En utilisant FTK Imager, le répertoire <code>%SystemRoot%\System32\Winevt\Logs</code>contient les logs de Windows 7.</p>
+<h3 id="analyse-des-services">Analyse des services</h3>
+<p>L&#39;interface native Windows <code>services.msc</code> permet d&#39;accéder à la liste des services qui s&#39;exécutent en arrière plan du système d&#39;exploitation.
+Certains <em>malware</em> ou utilitaires intrusifs et malveillants peuvent s&#39;y dissimuler et utiliser la discrétion des services Windows pour s&#39;exécuter en silence.</p>
+<h3 id="analyse-des-prefetch">Analyse des prefetch</h3>
+<p>Au premier lancement d&#39;un programme, Windows crée un fichier <em>prefetch</em> avec l&#39;extension <em>.pf</em> pour permettre d&#39;accélérer le chargement des applications. On peut retrouver l&#39;ensemble de ces <em>prefetch</em> dans le dossier <code>C\Windows\Prefetch</code> et y rechercher des indices d&#39;exécution de logiciels ou programmes indésirables.</p>
+<h3 id="analyse-du-registre">Analyse du registre</h3>
+<p>Le registre Windows est une base de données hiérarchique qui stocke les paramètres de bas niveau pour le système d&#39;exploitation Microsoft Windows et pour les applications qui choisissent d&#39;utiliser le registre.</p>
+<p>Les ruches du registre sont stockées dans le répertoire <code>%SystemRoot%\System32\config</code> et correspondent à un groupe logique de clés, sous-clés et valeurs.</p>
+<p>Quelques exemples :</p>
+<ul>
+<li>La ruche &quot;HKEY_CURRENT_CONFIG&quot; est associée aux fichiers &quot;System, System.alt, System.log, System.sav&quot;</li>
+<li>La ruche &quot;HKEY_CURRENT_USER&quot; est associées aux fichiers &quot;Ntuser.dat, Ntuser.dat.log&quot;</li>
+<li>La ruche &quot;HKEY_LOCAL_MACHINE\SAM&quot; est associée aux fichiers &quot;Sam, Sam.log, Sam.sav&quot;</li>
+</ul>
+<p>Le <em>dump</em> des fichiers de registre est réalisable gràce à FTK Imager pour être stockés dans un répertoire pour analyse avec l&#39;outil <a href="https://github.com/keydet89/RegRipper4.0">RegRipper</a>.</p>
+<h3 id="analyse-avec-autopsy">Analyse avec Autopsy</h3>
+<p>Les étapes à suivre pour l&#39;analyse de disque avec la suite offerte par The Sleuth Kit et sa surcouche graphique appelée Autopsy sont les suivantes :</p>
+<ol>
+<li>créer une enquête et nommer son <em>case</em></li>
+<li>ajouter les images à analyser et préciser les modules à utiliser</li>
+<li>lancer l&#39;analyse automatisée pour <em>parser</em> les données</li>
+<li>identifier les exécutables et fichiers suspects en navguant dans l&#39;arborescence</li>
+<li>rechercher les fichiers récemment consultés au moment de l&#39;incident</li>
+<li>produire une <em>timeline</em> automatique par nombre d&#39;évènements générés en filtrant les dates</li>
+<li>générer un rapport au format html</li>
+</ol>
+<h3 id="pour-aller-plus-loin">Pour aller plus loin</h3>
+<p>De nombreux outils complémentaires existent pour conduire davantange d&#39;investigation :</p>
+<ul>
+<li><a href="https://virustotal.com/">VirusTotal</a> pour vérifier que le fichier n&#39;est pas déjà identifié par malveillant</li>
+<li>la commande <code>file</code> sous Linux pour déterminer le type du fichier</li>
+<li>la commande <code>strings</code> sous Linux pour en extraire les chaines de caractère</li>
+<li>l&#39;analyse d&#39;email et des fichiers archives de mail en <em>.pst</em> ou <em>.ost</em> est possible avec <a href="https://datahelp.in/ost/viewer.html">Free OST Viewer Tool</a></li>
+<li>l&#39;analyse d&#39;un fichier <em>.pdf</em> peut se faire avec un script Python appelé <a href="https://blog.didierstevens.com/programs/pdf-tools/">pdfid.py</a> </li>
+<li>des utilitaires existent également pour décortiquer les fichiers Microsoft Office et LibreOffice</li>
+</ul>
+<h2 id="rapport-d-investigation">Rapport d&#39;investigation</h2>
+<p>Il s&#39;agit dès lors de communiquer les Indicateurs de Compromission (IoC) pour caractériser l&#39;incident.
+Ce rapport permettra de capitaliser sur les analyses effectuées et, ultérieurement, d&#39;identifier plus rapidement les menaces similaires.</p>
+<p>Il convient de lister :</p>
+<ul>
+<li>les IoC réseaux faisant référence à une activité réseau malveillante (connexions, noms de domaines, URL...)</li>
+<li>les hash de fichiers compromettants</li>
+<li>les adresses mails et autres éléments d&#39;identification de l&#39;origine de l&#39;incident</li>
+<li>l&#39;impact de l&#39;incident sur la machine (création de service, modification de clé de registre...)</li>
+</ul>
+<p>Certains outils permettent de mettre en forme ces IoC et de décrire le fonctionnement des attaques :</p>
+<ul>
+<li><a href="https://www.fireeye.com/services/freeware/ioc-editor.html">IoC-Editor</a> stocke et gère les indicateurs de compromission</li>
+<li>le format <a href="https://stixproject.github.io/">STIX</a> permet aussi de réaliser des fichiers d&#39;IoC</li>
+<li>la matrice <a href="https://attack.mitre.org/">ATT&amp;CK</a> permet de décrire des modes opératoires d&#39;attaques</li>
+</ul>
+<p>Voici ci-dessous un exemple de plan pour structurer le rapport de <em>forensic</em> :</p>
+<ol>
+<li>Page de garde</li>
+<li>Sommaire</li>
+<li>Résumé des investigations, rappel du contexte et des conclusions</li>
+<li>Détail des investigations :<ul>
+<li>phase de collecte et hash (copie d’écran, photos) ;</li>
+<li>analyse réalisée et mise en exergue des découvertes (copie d’écran, photos)</li>
+</ul>
+</li>
+<li>Hypothèse de l’analyse</li>
+<li>Recommandations</li>
+<li>Liste des indicateurs de compromission</li>
+</ol>
+    
+  </body>
+</html>
