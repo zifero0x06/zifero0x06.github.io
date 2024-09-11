@@ -7,14 +7,14 @@ h2, h3, h4 {
 }
 
 html {
-  font-size: 18px;
+  font-size: 16px;
   font-family: sans-serif;
   background-color: #1e1919;
   color: #e3dddd;
 }
 
 body {
-  width: 70%;
+  width: 80%;
   margin: 0 auto;
   padding: 0 2% 2% 2%;
 }
