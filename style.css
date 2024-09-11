@@ -8,7 +8,7 @@ h2, h3, h4 {
 
 html {
   font-size: 18px;
-  font-family: Tahoma, sans-serif;
+  font-family: sans-serif;
   background-color: #1e1919;
   color: #e3dddd;
 }
@@ -20,5 +20,5 @@ body {
 }
 
 a {
-  all: unset;
+  text-decoration: none;
 }
