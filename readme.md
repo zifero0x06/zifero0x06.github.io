@@ -1,5 +1,5 @@
 # Bienvenue
 
-Lien vers des prises de notes [investigation numérique](./forensic.md)
+Lien vers [investigation numérique](./forensic.md)
 
-Lien vers des prises de notes [test d'intrusion](./pentest.md)
+Lien vers [test d'intrusion](./pentest.md)
