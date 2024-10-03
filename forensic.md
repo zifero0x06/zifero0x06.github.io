@@ -48,7 +48,7 @@ Un objectif : ne pas altérer les données collectées puis stockées sur un sup
 Outre les images brutes (dîtes RAW) certains formats "métiers" ont émergé :
 - EnCase EWF (Expert Witness Format)
 - FTK Smart
-- AFF (Advanced Forensic Format) comme formart ouvert
+- AFF (Advanced Forensic Format) comme format ouvert
 
 Après utilisation d'un logiciel de *dump* il faudra calculer le l'empreinte ou le *hash* de ce dernier. Ce calcul de condensat (ou hachage) s'établira comme une preuve que le fichier n'a pas été altéré par rapport à ce qu'il était à l'origine.
 
