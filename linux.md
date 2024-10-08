@@ -10,10 +10,11 @@ Pour un <*.iso> Windows, préférer l'utilisation de Rufus.
 
 1. Connaitre son CPU : `lscpu`
 2. Connaitre son usage RAM : `free -m`
-3. Connaitre ses disques : `lsblk`
-4. Connaitre ses périphériques PCI : `lspci`
-5. Connaitre son BIOS : `dmidecode -t bios`
-6. Afficher des informations générales : `dmidecode -t system`
+3. Connaitre ses caractéristiques de RAM : `sudo dmidecode -t memory`
+4. Connaitre ses disques : `lsblk`
+5. Connaitre ses périphériques PCI : `lspci`
+6. Connaitre son BIOS : `dmidecode -t bios`
+7. Afficher des informations générales : `dmidecode -t system`
 
 ## Compiler du code C/C++ directement en assembleur
 
@@ -114,6 +115,43 @@ VBoxManage modifyvm --natnet<5-8> <network>|default
 VBoxManage modifyvm --nat-network<5-8> <network name>
 ```
 
+## Installer Exegol
+
+Sous Fedora, installer les éléments prérequis puis Docker puis Exegol :
+
+```bash
+sudo dnf install git
+sudo dnf install python3
+sudo dnf install python3-pip
+curl -fsSL "https://get.docker.com/" | sh
+sudo usermod -aG docker $(id -u -n)
+newgrp docker
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo docker run hello-world
+
+python3 -m pip install pipx
+pipx install exegol
+pipx ensurepath
+echo "alias exegol='sudo -E $(which exegol)'" >> ~/.bash_aliases
+source ~/.bashrc
+exegol install
+```
+
+Installer l'autocompletion :
+
+```bash
+sudo dnf install python3-argcomplete
+pip3 install --user argcomplete
+pipx install argcomplete
+sudo dnf update && sudo dnf install bash-completion
+```
+A ce point, il devrait y avoir un fichier /etc/bash_completion.d/exegol existant.
+Sinon, créer un fichier vide 'exegol' puis :
+
+```bash
+register-python-argcomplete --no-defaults exegol | sudo tee etc/bash_completion.d/exegol > /dev/null
+```
 
 
 
