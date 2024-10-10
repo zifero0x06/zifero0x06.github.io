@@ -156,10 +156,10 @@ register-python-argcomplete --no-defaults exegol | sudo tee etc/bash_completion.
 # Liste d'outils indispensables :
 
 ```bash
-sudo dnf openvpn
-sudo dnf filezilla
-sudo dnf openrgb
-sudo dnf vlc
+sudo dnf install openvpn
+sudo dnf install filezilla
+sudo dnf install openrgb
+sudo dnf install vlc
 sudo dnf install bash-completion
 sudo dnf install curl
 sudo dnf install neofetch
@@ -197,7 +197,7 @@ sudo /sbin/vboxconfig
 Activer le plugin "Aperçu de document" en allant dans Configuration > Configurer Kate... > Modules externes >cocher la case "Aperçu de document"
 
 ```bash
-sudo dnf markdownpart
+sudo dnf install markdownpart
 ```
 
 # Sous Fedora, pour installer le navigateur Brave :
