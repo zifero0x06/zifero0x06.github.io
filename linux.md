@@ -178,7 +178,9 @@ sudo dnf config-manager --enable fedora-cisco-openh264
 ```
 
 Éditeur graphique [yEd](https://www.yworks.com/products/yed/download#download)
+
 Suite bureautique [ONLYOFFICE](https://www.onlyoffice.com/fr/download-desktop.aspx#desktop)
+
 Oracle [VirtualBox](https://www.virtualbox.org/wiki/Linux_Downloads)
 
 Pour finaliser l'installation de VirtualBox :
