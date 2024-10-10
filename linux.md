@@ -153,7 +153,58 @@ Sinon, créer un fichier vide 'exegol' puis :
 register-python-argcomplete --no-defaults exegol | sudo tee etc/bash_completion.d/exegol > /dev/null
 ```
 
+# Liste d'outils indispensables :
+
+```bash
+sudo dnf openvpn
+sudo dnf filezilla
+sudo dnf openrgb
+sudo dnf vlc
+sudo dnf install bash-completion
+sudo dnf install curl
+sudo dnf install neofetch
+sudo dnf install timeshift
+sudo dnf install gcc-c++
+sudo dnf install gcc
+sudo dnf install python3
+sudo dnf install keepassxc
+sudo dnf install yakuake
+sudo dnf install konversation
+sudo dnf install gparted
+```
+
+```bash
+sudo dnf config-manager --enable fedora-cisco-openh264
+```
+
+Éditeur graphique [yEd](https://www.yworks.com/products/yed/download#download)
+Suite bureautique [ONLYOFFICE](https://www.onlyoffice.com/fr/download-desktop.aspx#desktop)
+Oracle [VirtualBox](https://www.virtualbox.org/wiki/Linux_Downloads)
+
+Pour finaliser l'installation de VirtualBox :
+
+```bash
+sudo usermod -a -G vboxusers $USER
+sudo dnf install kernel-devel
+sudo /sbin/vboxconfig
+```
 
 
+# Pour réparer l'affichage aperçu (document preview) de l'éditeur KDE Kate lors de l'édition markdown :
 
+Activer le plugin "Aperçu de document" en allant dans Configuration > Configurer Kate... > Modules externes >cocher la case "Aperçu de document"
+
+```bash
+sudo dnf markdownpart
+```
+
+# Sous Fedora, pour installer le navigateur Brave :
+
+```bash
+sudo dnf update
+sudo dnf install dnf-plugins-core
+sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+sudo dnf install brave-browser
+```
 
